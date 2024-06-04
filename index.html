@@ -18,8 +18,8 @@
 
             .confetti {
                 position: absolute;
-                width: 10px;
-                height: 10px;
+                width: 13px;
+                height: 13px;
                 background-color: red;
                 opacity: 0;
                 animation: confetti-fall 2s linear forwards;
@@ -36,9 +36,7 @@
                     transform: translate(var(--x), var(--y)) rotate(720deg);
                 }
             }
-        </style>
 
-        <style>
             .container {
                 display: flex;
                 justify-content: center;
@@ -46,22 +44,23 @@
                 height: 100vh;
                 z-index: 1 !important;
             }
+
+            #result {
+                margin-bottom: 20px;
+            }
         </style>
 
     </head>
 
     <body>
-        <section class="section">
-            <div class="container">
-                <div class="box has-text-centered">
-                    <div id="result" class="content mt-5">
-                        <h1 class="title">Træk en EP-kandidat...</h1>
-                        <button id="generate-btn" class="button is-primary is-large">Giv mig et navn!</button>
-                    </div>
-
+        <div class="container">
+            <div class="box has-text-centered">
+                <div id="result" class="content mt-5">
+                    <button id="generate-btn" class="button is-large is-fullwidth">🇪🇺 Giv mig en EP-kandidat! 🇪🇺</button>
                 </div>
+
             </div>
-        </section>
+        </div>
         <script>
             const candidatesData = {
                 "Socialdemokratiet": [
