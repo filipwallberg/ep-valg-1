@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="da">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Hvem skal jeg stemme på?</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+
+        <style>
+            body {
+                margin: 0;
+                overflow: hidden;
+                position: relative;
+                background-color: white;
+                transition: background-color 0.5s;
+            }
+
+            .confetti {
+                position: absolute;
+                width: 10px;
+                height: 10px;
+                background-color: red;
+                opacity: 0;
+                animation: confetti-fall 2s linear forwards;
+            }
+
+            @keyframes confetti-fall {
+                0% {
+                    opacity: 1;
+                    transform: translate(0, 0) rotate(0deg);
+                }
+
+                100% {
+                    opacity: 0;
+                    transform: translate(var(--x), var(--y)) rotate(720deg);
+                }
+            }
+        </style>
+
+        <style>
+            .container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                z-index: 1 !important;
+            }
+        </style>
+
+    </head>
+
+    <body>
+        <section class="section">
+            <div class="container">
+                <div class="box has-text-centered">
+                    <div id="result" class="content mt-5">
+                        <h1 class="title">Træk en EP-kandidat...</h1>
+                        <button id="generate-btn" class="button is-primary is-large">Giv mig et navn!</button>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        <script>
+            const candidatesData = {
+                "Socialdemokratiet": [
+                    "Christel Schaldemose",
+                    "Mathias Niebuhr",
+                    "Niels Fuglsang",
+                    "Niels Christian Dahl",
+                    "Marianne Vind",
+                    "Andi Helbo Sejersen",
+                    "Magnus Barsøe",
+                    "Tayo Lill Andreasen",
+                    "Asser Mortensen",
+                    "Maria Radoor"
+                ],
+                "Radikale Venstre": [
+                    "Sigrid Friis",
+                    "Jan Werner Mathiasen",
+                    "Anne Sophie Callesen",
+                    "Kim Pagels",
+                    "Philip Tarning-Andersen",
+                    "Finn Hartvig Nielsen",
+                    "Anne-Sofie Sadolin Henningsen",
+                    "Sissel van Run-Kvist",
+                    "Charlotte Amdi Burgess",
+                    "Martin Schepelern",
+                    "Kathrine Olldag",
+                    "Michael Flarup",
+                    "Frederik Aagaard Sørensen",
+                    "Asmus Knigge Vilster",
+                    "Hediye Temiz",
+                    "Nikolai Tange",
+                    "Jens Frost",
+                    "Lars Fogh Mortensen",
+                    "João Møller Lartey Lawson"
+                ],
+                "Det Konservative Folkeparti": [
+                    "Niels Flemming Hansen",
+                    "Egil Hulgaard",
+                    "Marcus Knuth",
+                    "Helle Laursen Petersen",
+                    "Birgitte Bergman",
+                    "Manuel Vigilius",
+                    "Maria Pryds",
+                    "Barbara Engelstoft",
+                    "Steen Holm Iversen",
+                    "Nicklas Verne",
+                    "Tina-Mia Eriksen",
+                    "Vladimir Stanic",
+                    "Søren Friis Trebbien",
+                    "Elisabeth Ildal",
+                    "Flemming Agerskov",
+                    "Martin Vendel Nielsen",
+                    "Jacob Rosenberg",
+                    "John Hoppe",
+                    "Natasja Bruun Knudsen",
+                    "Jacob Stryhn"
+                ],
+                "SF – Socialistisk Folkeparti": [
+                    "Kira Marie Peter-Hansen",
+                    "Joan Kragh",
+                    "Rasmus Nordqvist",
+                    "Thue Grum-Schwensen",
+                    "Villy Søvndal",
+                    "Mads Hvid",
+                    "Rikke Lauritsen",
+                    "John Brandt",
+                    "Magnus Flensborg",
+                    "Anders Bøge",
+                    "Kristine Amalie Rostgård",
+                    "Pia Lieberknecht",
+                    "Melina Andersen",
+                    "Emil Njor",
+                    "Taner Genc",
+                    "Elias Julius Binggeli",
+                    "Andreas Grosbøll",
+                    "Kim Elmose",
+                    "Michael Egelund Andersen",
+                    "Allan Søgaard-Andersen"
+                ],
+                "Liberal Alliance": [
+                    "Henrik Dahl",
+                    "Thomas Vesth",
+                    "Mads Strange",
+                    "Nikolaj Steffenauer",
+                    "Thorbjørn Jacobsen",
+                    "Danny Malkowski",
+                    "Carsten Normann",
+                    "Lars Høyer Holmqvist",
+                    "Helle Jensen",
+                    "Louise Siv Ebbesen",
+                    "Martin Sibast Laugesen",
+                    "Chelle Lilly"
+                ],
+                "Moderaterne": [
+                    "Stine Bosse",
+                    "Karin Liltorp",
+                    "Bergur Løkke Rasmussen",
+                    "Ivar Nørlund",
+                    "Tobias Marney",
+                    "Frederik Lau Petersen",
+                    "Laurs Nørlund",
+                    "Abdinoor Adam Hassan",
+                    "Barikan Solecki",
+                    "Dea Kehler",
+                    "Klavs A. Holm",
+                    "Lars Barfoed"
+                ],
+                "Dansk Folkeparti": [
+                    "Anders Vistisen",
+                    "Julie Jacobsen",
+                    "Majbritt Birkholm",
+                    "Søren Hansen",
+                    "Tobias Weische",
+                    "Inger-Marie Tryde",
+                    "Hans Blaaberg",
+                    "Mette Sode Hansen",
+                    "Finn Rudaizky",
+                    "Henrik Thinggaard",
+                    "Sune Nørgaard Jakobsen",
+                    "Birgitte Milling",
+                    "Carsten Sørensen",
+                    "Søren Lund Hansen",
+                    "Michael Nedersøe",
+                    "Bonett Trusell",
+                    "Rune Bønnelykke",
+                    "Stine Steffensen"
+                ],
+                "Venstre, Danmarks Liberale Parti": [
+                    "Morten Løkkegaard",
+                    "Alexandra Sasha",
+                    "Asger Christensen",
+                    "Jonas Pullich",
+                    "Ulla Tørnæs",
+                    "Torsten Laksafoss Holbek",
+                    "Julie Hassing",
+                    "Thorbern Alexander Klingert",
+                    "Marianne Lynghøj",
+                    "Jakob Dyrman",
+                    "Carsten Kissmeyer",
+                    "Niels Plum"
+                ],
+                "Danmarksdemokraterne - Inger Støjberg": [
+                    "Kristoffer Storm",
+                    "Niklas Fritz Kjærulff",
+                    "Vivi Altenburg",
+                    "Anton Rosenstrøm Laursen",
+                    "Magnus Bigum",
+                    "Bob Richard Nielsen",
+                    "Benny Bindslev",
+                    "Dina Person",
+                    "Lars Bregnbak",
+                    "Erik Poulsen",
+                    "Susanne Damsgaard",
+                    "Morten Vehl Revsbeck",
+                    "Karen Lia Fromm-Christiansen",
+                    "Claus Bisgaard Skovmose",
+                    "Annette Benthien Giuranna",
+                    "Bent Juul Sørensen",
+                    "Renate Hendriksen",
+                    "Nikolaj Vang"
+                ],
+                "Enhedslisten - De Rød-Grønne": [
+                    "Per Clausen",
+                    "Stine Ry Andersen",
+                    "Frederikke Hellemann",
+                    "Selma Bolø",
+                    "Nana Højlund",
+                    "Victoria Velásquez",
+                    "Ludvig Goldschmidt",
+                    "Ibrahim Benli",
+                    "Asta Kofod",
+                    "Christian Schmidt Jacobsen",
+                    "Reinout Bosch",
+                    "Runa Friis Hansen",
+                    "Torsten Ringgaard",
+                    "Clara Turms"
+                ],
+                "Alternativet": [
+                    "Jan Kristoffersen",
+                    "Julius Schubring",
+                    "Karoline Lindgaard",
+                    "Johannes Slyngborg",
+                    "Petar Socevic",
+                    "Yurdal Cicek",
+                    "Nilas Bay-Foged",
+                    "Anette Jensen Smith",
+                    "Sofie Groth",
+                    "Mikael Hertig",
+                    "Jørn Grønkjær",
+                    "Irina Bjørnø",
+                    "Valentina Crast"
+                ]
+            };
+
+            document.getElementById('generate-btn').addEventListener('click', generateRandomCandidate);
+
+            function generateRandomCandidate() {
+                const parties = Object.keys(candidatesData);
+                const randomParty = parties[Math.floor(Math.random() * parties.length)];
+                const candidates = candidatesData[randomParty];
+                const randomCandidate = candidates[Math.floor(Math.random() * candidates.length)];
+                displayResult(randomCandidate, randomParty);
+            }
+
+            function displayResult(candidate, party) {
+                startConfetti();
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = `<h1 class="title">Du skal stemme på <strong>${candidate}</strong> fra <strong>${party}</strong></h1>`;
+            }
+        </script>
+
+        <script>
+            function createConfettiPiece() {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = '50vw';
+                confetti.style.top = '50vh';
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+
+                const angle = Math.random() * 2 * Math.PI; // Tilfældig retning
+                const distance = Math.random() * 100 + 50; // Tilfældig afstand
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+
+                confetti.style.setProperty('--x', `${x}vw`);
+                confetti.style.setProperty('--y', `${y}vh`);
+
+                document.body.appendChild(confetti);
+
+                // Fjern konfettien efter animationen er færdig
+                setTimeout(() => {
+                    confetti.remove();
+                }, 2000);
+            }
+
+            function changeBackgroundColor() {
+                const randomColor = `hsl(${Math.random() * 360}, 100%, 80%)`;
+                document.body.style.backgroundColor = randomColor;
+            }
+
+            function startConfetti() {
+                for (let i = 0; i < 1000; i++) {
+                    setTimeout(createConfettiPiece, i * 2);
+                }
+
+                let colorInterval = setInterval(changeBackgroundColor, 100);
+
+                // Stop baggrundsfarveændringer efter 5 sekunder og skift til hvid
+                setTimeout(() => {
+                    clearInterval(colorInterval);
+                    document.body.style.backgroundColor = 'white';
+                }, 3000);
+            }
+
+        </script>
+
+    </body>
+
+</html>
